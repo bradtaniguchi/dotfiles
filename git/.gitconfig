@@ -1,0 +1,29 @@
+[user]
+	email = bradtaniguchi@gmail.com
+  name = bradtaniguchi
+  username = bradtaniguchi
+[core]
+  editor = 'vim'
+  excludesfile = ~/.gitignore_global
+[init]
+  defaultBranch = main
+
+# color settings
+[color]
+  ui = true
+
+[color "branch"]
+  current = yellow reverse
+  local = yello
+  remote = green
+
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = red
