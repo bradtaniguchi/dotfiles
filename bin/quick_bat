@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# only useful on laptops
+# battery | grep percentage | sed 's/ //g' | cut -c 12-15

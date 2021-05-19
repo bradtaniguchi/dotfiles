@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sensors | grep -o -m 1 "[0-9]*\.0"
+
