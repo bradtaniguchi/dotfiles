@@ -11,3 +11,6 @@ echo ">> Adding vim alias to ~/.bashrc and ~/.zshrc"
 echo "alias vim='nvim'" >> ~/.bashrc
 echo "alias vim='nvim'" >> ~/.zshrc
 
+# set editors to nvim
+echo "export VISUAL=nvim" >> ~/.bashrc
+echo "export EDITOR=\"$VISUAL\"" >> ~/.bashrc
