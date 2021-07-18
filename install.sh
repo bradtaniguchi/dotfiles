@@ -12,13 +12,20 @@ echo "alias vim='nvim'" >> ~/.bashrc
 echo "alias vim='nvim'" >> ~/.zshrc
 
 # set editors to nvim
+echo ">> Setting VISUAL in ~/.bashrc and ~/.zshrc"
 echo "export VISUAL=nvim" >> ~/.bashrc
-echo "export EDITOR=\"$VISUAL\"" >> ~/.bashrc
+echo "export VISUAL=nvim" >> ~/.zshrc
 
+# set editors to nvim
+echo ">> Setting EDITOR in ~/.bashrc and ~/.zshrc"
+echo "export EDITOR=nvim" >> ~/.bashrc
+echo "export EDITOR=nvim" >> ~/.zshrc
 
 # git setup
+echo ">> Setting global git editor to nvim"
 git config --global core.editor "nvim"
 
 # setup git completion
+echo ">> Setting git completion to ~/.bashrc and ~/.zshrc"
 echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
 echo "source /usr/share/bash-completion/completions/git" >> ~/.zshrc
