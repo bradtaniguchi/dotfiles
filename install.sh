@@ -17,7 +17,7 @@ echo "export EDITOR=\"$VISUAL\"" >> ~/.bashrc
 
 
 # git setup
-git config --global core.editor "nim"
+git config --global core.editor "nvim"
 
 # setup git completion
 echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
