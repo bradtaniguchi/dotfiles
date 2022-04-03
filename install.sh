@@ -30,10 +30,20 @@ echo ">> Setting git completion to ~/.bashrc and ~/.zshrc"=
 echo "# auto-completion
 if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
   . /opt/local/etc/profile.d/bash_completion.sh
-fi" >> ~/.zshrc
+fi
+" >> ~/.zshrc
 echo "# auto-completion
 if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
   . /opt/local/etc/profile.d/bash_completion.sh
-fi" >> ~/.bashrc
-# echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
-# echo "source /usr/share/bash-completion/completions/git" >> ~/.zshrc
+fi
+" >> ~/.bashrc
+
+# Copy run-com files if they don't already exist
+echo ">> Copying run-com files"
+cp -n ./runcom/.tmux.conf ~/.tmux.conf
+cp -n ./runcom/.vimrc ~/.vimrc
+cp -n ./runcom/.init.vim ~/.config/nvim/init.vim
+
+# Copy aliases
+cat ./runcom/.aliases >> ~/.zshrc
+cat ./runcom/.aliases >> ~/.bashrc
