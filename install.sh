@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# exit when any command fails
+set -e
+
 # create nvim directory
 echo ">> creating nvim directory, if there isn't one"
 mkdir -p ~/.config/nvim
@@ -40,7 +43,7 @@ fi
 echo ">> Copying run-com files"
 cp -n ./runcom/.tmux.conf ~/.tmux.conf
 cp -n ./runcom/.vimrc ~/.vimrc
-cp -n ./runcom/.init.vim ~/.config/nvim/init.vim
+cp -n ./runcom/init.vim ~/.config/nvim/init.vim
 
 # Copy aliases
 cat ./runcom/.aliases >> ~/.zshrc
