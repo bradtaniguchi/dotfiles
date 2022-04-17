@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# WIP
-
 # create nvim directory
 echo ">> creating nvim directory, if there isn't one"
 mkdir -p ~/.config/nvim
