@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# WIP
+# exit when any command fails
+set -e
 
 # create nvim directory
 echo ">> creating nvim directory, if there isn't one"
@@ -22,8 +23,12 @@ echo "export EDITOR=nvim" >> ~/.bashrc
 echo "export EDITOR=nvim" >> ~/.zshrc
 
 # git setup
-echo ">> Setting global git editor to nvim"
-git config --global core.editor "nvim"
+echo ">> Setting global git editor to nvim, if exists"
+if command -v nvim &> /dev/null
+then
+    echo "nvm found, setting global git editor"
+    git config --global core.editor "nvim"
+fi
 
 # setup git completion
 echo ">> Setting git completion to ~/.bashrc and ~/.zshrc"=
@@ -42,8 +47,10 @@ fi
 echo ">> Copying run-com files"
 cp -n ./runcom/.tmux.conf ~/.tmux.conf
 cp -n ./runcom/.vimrc ~/.vimrc
-cp -n ./runcom/.init.vim ~/.config/nvim/init.vim
+cp -n ./runcom/init.vim ~/.config/nvim/init.vim
 
 # Copy aliases
 cat ./runcom/.aliases >> ~/.zshrc
 cat ./runcom/.aliases >> ~/.bashrc
+
+echo ">> Done!"
