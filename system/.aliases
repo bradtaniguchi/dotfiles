@@ -1,3 +1,7 @@
+alias ls='ls -F'
+alias ll='ls -lh'
+alias lt='ls --human-readable --size -1 -S --classify'
+alias left='ls -t -1'
 alias cp="cp -i"                          # confirm before overwriting something
 alias df='df -h'                          # human-readable sizes
 alias free='free -m'                      # show sizes in MB

@@ -50,7 +50,8 @@ cp -n ./runcom/.vimrc ~/.vimrc
 cp -n ./runcom/init.vim ~/.config/nvim/init.vim
 
 # Copy aliases
-cat ./runcom/.aliases >> ~/.zshrc
-cat ./runcom/.aliases >> ~/.bashrc
+echo ">> Copying system aliases"
+cat ./system/.aliases >> ~/.zshrc
+cat ./system/.aliases >> ~/.bashrc
 
 echo ">> Done!"
