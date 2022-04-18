@@ -1,6 +1,11 @@
 # dotfiles
 
-Repo for dotfiles for Linux system configuration files. 
+Repo for dotfiles for Linux system configuration files.
 
-This repo is still a WIP
+## Installation
 
+run `./install.sh`.
+
+## License
+
+See [LICENSE](./LICENSE)
