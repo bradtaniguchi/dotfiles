@@ -32,4 +32,15 @@ set title
 """""
 " Plugins
 """""
+" call plug#begin()
 
+"" Make sure you use single quotes
+" Plug 'junegunn/vim-easy-align'
+" Plug 'scrooloose/nerdtree'
+" Plug 'junegunn/fzf'
+" Plug 'jose-elias-alvarez/null-ls.nvim'
+" Plug 'MunifTanjim/prettier.nvim'
+" Plug 'kyazdani42/nvim-web-devicons'
+" Plug 'romgrk/barbar.nvim'
+
+" call plug#end()
