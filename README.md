@@ -4,7 +4,15 @@ Repo for dotfiles for Linux system configuration files.
 
 ## Installation
 
-run `./install.sh`.
+### Prerequisites
+
+- neo-vim
+  - vim-plug
+- tmux
+
+### Install script
+
+Run `./install.sh`
 
 ## License
 
