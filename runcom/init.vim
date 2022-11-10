@@ -32,29 +32,30 @@ set title
 """""
 " Plugins
 """""
-call plug#begin()
-Plug 'junegunn/vim-easy-align'
-Plug 'scrooloose/nerdtree'
-Plug 'junegunn/fzf'
-Plug 'neovim/nvim-lspconfig'
-Plug 'jose-elias-alvarez/null-ls.nvim'
-Plug 'MunifTanjim/prettier.nvim'
-Plug 'kyazdani42/nvim-web-devicons'
-Plug 'romgrk/barbar.nvim'
-Plug 'nvim-lualine/lualine.nvim'
-Plug 'onsails/lspkind-nvim'
-Plug 'nvim-telescope/telescope.nvim'
-Plug 'dinhhuy258/git.nvim'
-Plug 'norcalli/nvim-colorizer.lua'
-Plug 'akinsho/nvim-bufferline.lua'
-Plug 'lewis6991/gitsigns.nvim'
-Plug 'iamcco/markdown-preview.nvim'
-" Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'jose-elias-alvarez/typescript.nvim'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-let g:coc_global_extensions = [
-  \ 'coc-tsserver'
-  \ ]
+" call plug#begin()
 
-call plug#end()
+" Plug 'junegunn/vim-easy-align'
+" Plug 'scrooloose/nerdtree'
+" Plug 'junegunn/fzf'
+" Plug 'neovim/nvim-lspconfig'
+" Plug 'jose-elias-alvarez/null-ls.nvim'
+" Plug 'MunifTanjim/prettier.nvim'
+" Plug 'kyazdani42/nvim-web-devicons'
+" Plug 'romgrk/barbar.nvim'
+" Plug 'nvim-lualine/lualine.nvim'
+" Plug 'onsails/lspkind-nvim'
+" Plug 'nvim-telescope/telescope.nvim'
+" Plug 'dinhhuy258/git.nvim'
+" Plug 'norcalli/nvim-colorizer.lua'
+" Plug 'akinsho/nvim-bufferline.lua'
+" Plug 'lewis6991/gitsigns.nvim'
+" Plug 'iamcco/markdown-preview.nvim'
+"" Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" Plug 'jose-elias-alvarez/typescript.nvim'
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" let g:coc_global_extensions = [
+"   \ 'coc-tsserver'
+"   \ ]
+
+" call plug#end()
 
