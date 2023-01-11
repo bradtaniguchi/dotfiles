@@ -31,4 +31,13 @@ echo ">> Copying system aliases"
 cat ./system/.aliases >> ~/.zshrc
 cat ./system/.aliases >> ~/.bashrc
 
+# Setup nvim and helpers
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends neovim wget gnupg curl \
+    && apt-get clean
+
+# setup vim-plug
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
 echo ">> Done!"
