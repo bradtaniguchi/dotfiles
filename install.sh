@@ -23,7 +23,6 @@ fi
 # Copy run-com files if they don't already exist
 echo ">> Copying run-com files"
 cp -n ./runcom/.tmux.conf ~/.tmux.conf
-cp -n ./runcom/.vimrc ~/.vimrc
 cp -n ./runcom/init.vim ~/.config/nvim/init.vim
 
 # Copy aliases
