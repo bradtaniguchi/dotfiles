@@ -1,5 +1,5 @@
 ##############################
-########## dotfile  ##########
+##### dotfile-rc-start  ######
 ##############################
 export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -14,5 +14,5 @@ if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
   . /opt/local/etc/profile.d/bash_completion.sh
 fi
 ##############################
-########## dotfile  ##########
+####### dotfile-rc-end  ######
 ##############################

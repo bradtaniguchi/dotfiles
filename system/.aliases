@@ -1,3 +1,7 @@
+##############################
+##### dotfile-alias-start ####
+##############################
+
 alias ls='ls -F'
 alias ll='ls -lh'
 alias lt='ls --human-readable --size -1 -S --classify'
@@ -8,4 +12,6 @@ alias free='free -m'                      # show sizes in MB
 alias np='nano -w PKGBUILD'
 alias more=less
 alias vim=nvim
-
+##############################
+##### dotfile-alias-end ######
+##############################
