@@ -1,3 +1,25 @@
 {
-  "cSpell.words": ["dotfiles", "nvim", "PKGBUILD"]
+  "cSpell.words": [
+    "autoindent",
+    "breakindent",
+    "dotfiles",
+    "expandtab",
+    "fillchars",
+    "guibg",
+    "guifg",
+    "hlsearch",
+    "ignorecase",
+    "incsearch",
+    "laststatus",
+    "listchars",
+    "nvim",
+    "PKGBUILD",
+    "Pmenu",
+    "shiftwidth",
+    "showcmd",
+    "showmode",
+    "smartcase",
+    "smarttab",
+    "softtabstop"
+  ]
 }
