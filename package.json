@@ -1,0 +1,23 @@
+{
+  "name": "dotfiles",
+  "version": "0.0.0",
+  "description": "Repo for dotfiles for Linux system configuration files.",
+  "main": "index.js",
+  "scripts": {
+    "install": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bradtaniguchi/dotfiles.git"
+  },
+  "keywords": [],
+  "author": "Brad Taniguchi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bradtaniguchi/dotfiles/issues"
+  },
+  "homepage": "https://github.com/bradtaniguchi/dotfiles#readme",
+  "dependencies": {
+    "fs-extra": "^11.1.1"
+  }
+}
