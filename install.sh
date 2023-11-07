@@ -3,6 +3,12 @@
 # exit when any command fails
 set -e
 
+# Install neovim
+NVIM_VERSION=0.7.0
+sudo apt-get install -y libfuse2
+curl -L -o $HOME/bin/nvim https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim.appimage
+chmod a+x $HOME/bin/nvim
+
 # create nvim directory
 echo ">> creating nvim directory, if there isn't one"
 mkdir -p ~/.config/nvim
