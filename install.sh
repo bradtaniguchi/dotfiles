@@ -20,6 +20,7 @@ set -e
 # Install neovim
 NVIM_VERSION=0.7.0
 sudo apt-get install -y libfuse2
+mkdir -p $HOME/bin/nvim
 curl -L -o $HOME/bin/nvim https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim.appimage
 chmod a+x $HOME/bin/nvim
 
