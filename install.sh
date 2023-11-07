@@ -12,7 +12,6 @@ echo >&2 " USER        $USER"
 echo >&2 " HOME        $HOME"
 echo >&2 "====================================================================="
 
-cd $HOME
 
 # exit when any command fails
 set -e
