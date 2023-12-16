@@ -24,11 +24,6 @@ fi
 echo ">> Copying run-com files"
 cp -n ./runcom/.tmux.conf ~/.tmux.conf
 
-echo ">> installing nvchad"
-# if this has issues check here:
-# https://nvchad.com/quickstart/install
-git clone https://github.com/NvChad/NvChad ~/.config/nvim --depth 1 && nvim
-
 # Copy aliases
 echo ">> Copying system aliases"
 cat ./system/.aliases >> ~/.zshrc
@@ -38,6 +33,12 @@ cat ./system/.aliases >> ~/.bashrc
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends neovim wget gnupg curl \
     && apt-get clean
+
+
+echo ">> installing nvchad"
+# if this has issues check here:
+# https://nvchad.com/quickstart/install
+git clone https://github.com/NvChad/NvChad ~/.config/nvim --depth 1 && nvim
 
 # setup vim-plug
 sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
