@@ -4,8 +4,8 @@
 set -e
 
 # create nvim directory
-echo ">> creating nvim directory, if there isn't one"
-mkdir -p ~/.config/nvim
+# echo ">> creating nvim directory, if there isn't one"
+# mkdir -p ~/.config/nvim
 
 # Copy bashrc and zshrc
 echo ">> Copying system aliases"
@@ -27,6 +27,7 @@ git config --global core.editor "vim"
 # Copy run-com files if they don't already exist
 echo ">> Copying run-com files"
 cp -n ./runcom/.tmux.conf ~/.tmux.conf
+cp -n ./runcom/.vimrc ~/.vimrc
 
 # Copy aliases
 echo ">> Copying system aliases"
