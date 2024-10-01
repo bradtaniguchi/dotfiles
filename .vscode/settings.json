@@ -1,5 +1,10 @@
 {
   "editor.formatOnSave": true,
+  // always relative import unless node_modules, and always have file extension
+  "javascript.preferences.importModuleSpecifier": "relative",
+  // always include file extension
+  "javascript.preferences.importModuleSpecifierEnding": "js",
+
   "cSpell.words": [
     "autoindent",
     "breakindent",
@@ -13,6 +18,7 @@
     "incsearch",
     "laststatus",
     "listchars",
+    "neovim",
     "nvim",
     "PKGBUILD",
     "Pmenu",

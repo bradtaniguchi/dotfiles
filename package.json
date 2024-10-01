@@ -1,0 +1,30 @@
+{
+  "name": "dotfiles",
+  "version": "0.0.0",
+  "description": "Repo for dotfiles for Linux system configuration files.",
+  "main": "install.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "./install.js",
+    "lint": "eslint"
+  },
+  "keywords": [],
+  "author": "Brad Taniguchi",
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.11.1",
+    "@types/node": "^22.7.4",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-import": "^2.30.0",
+    "eslint-plugin-jsdoc": "^50.3.1",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.10.0",
+    "mock-fs": "^5.3.0",
+    "prettier": "^3.3.3"
+  }
+}
