@@ -4,6 +4,10 @@ import { installRumcom } from './src/install-runcom.js';
 import commandLineArgs from 'command-line-args';
 import { log } from './src/log.js';
 import { verifyManualInstallation } from './src/verify-manual-installation.js';
+import { HOME_DIR } from './src/constants/home-dir.js';
+import { installGitConfigs } from './src/install-git-configs.js';
+import { installTmuxConfig } from './src/install-tmux-config.js';
+import { installVimAndNvimConfigs } from './src/install-vim-and-nvim-configs.js';
 
 (async () => {
   /**
@@ -21,26 +25,48 @@ import { verifyManualInstallation } from './src/verify-manual-installation.js';
      * }}
      */
     // @ts-ignore
-    const { 'dry-run': dryRun } = commandLineArgs([
+    const { 'dry-run': dryRun, parallel } = commandLineArgs([
       {
         name: 'dry-run',
         alias: 'd',
         type: Boolean,
         defaultValue: false,
       },
+      {
+        name: 'parallel',
+        alias: 'p',
+        type: Boolean,
+        defaultValue: false,
+      },
     ]);
-
-    const HOME_DIR = process.env.HOME;
 
     log('starting install, with args', { dryRun, HOME_DIR });
 
-    if (!HOME_DIR) {
-      throw new Error('HOME environment variable not set');
+    const manualInstallation$ = verifyManualInstallation(dryRun);
+
+    const installRumcom$ = installRumcom(dryRun);
+
+    const installGitConfigs$ = installGitConfigs(dryRun);
+
+    const installTmuxConfig$ = installTmuxConfig(dryRun);
+
+    const installVimAndNvimConfigs$ = installVimAndNvimConfigs(dryRun);
+
+    if (parallel) {
+      await Promise.all([
+        manualInstallation$,
+        installRumcom$,
+        installGitConfigs$,
+        installTmuxConfig$,
+        installVimAndNvimConfigs$,
+      ]);
+    } else {
+      await manualInstallation$;
+      await installRumcom$;
+      await installGitConfigs$;
+      await installTmuxConfig$;
+      await installVimAndNvimConfigs$;
     }
-
-    await verifyManualInstallation(dryRun);
-
-    await installRumcom(dryRun);
 
     log('done installing dotfiles!');
   } catch (err) {

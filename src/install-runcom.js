@@ -1,6 +1,7 @@
 import { appendFile, readFile } from 'fs/promises';
 import { join } from 'path';
 import { log } from './log.js';
+import { HOME_DIR } from './constants/home-dir.js';
 import { RC_LINES } from './constants/rc.js';
 
 /**
@@ -11,13 +12,6 @@ import { RC_LINES } from './constants/rc.js';
 export async function installRumcom(dryRun = false) {
   log('Installing .rc files');
 
-  const HOME_PATH = process.env.HOME;
-
-  if (!HOME_PATH) {
-    // internal check, this should be flagged earlier
-    throw new Error('HOME environment variable not set');
-  }
-
   /**
    * @type {Array<'bashrc' | 'zshrc'>}
    */
@@ -27,7 +21,7 @@ export async function installRumcom(dryRun = false) {
 
   for (let rcLine of RC_LINES) {
     for (let rcFile of rcFiles) {
-      const rcFilePath = join(HOME_PATH, `.${rcFile}`);
+      const rcFilePath = join(HOME_DIR, `.${rcFile}`);
       const rcFileContents = await readFile(rcFilePath, 'utf-8');
 
       if (await rcLine.addLineCheckFn({ rcFile, rcFileContents })) {
