@@ -5,9 +5,10 @@ import { RC_LINES } from './constants/rc.js';
 
 /**
  * Function that handles installing the run-com files, vim, neovim and tmux
+ * @param {boolean} [dryRun] whether to run in dry run mode, will not throw
  * @returns {Promise<void>}
  */
-export async function installRumcom() {
+export async function installRumcom(dryRun = false) {
   log('Installing .rc files');
 
   const HOME_PATH = process.env.HOME;
@@ -31,7 +32,11 @@ export async function installRumcom() {
 
       if (await rcLine.addLineCheckFn({ rcFile, rcFileContents })) {
         try {
-          await appendFile(rcFilePath, `${rcLine.line}\n`);
+          if (dryRun) {
+            log('Dry run, skipping file write');
+          } else {
+            await appendFile(rcFilePath, `${rcLine.line}\n`);
+          }
           log(`Added line to ${rcFile}: ${rcLine.line}`);
           filesChanged++;
         } catch (err) {

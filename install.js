@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { installRumcom } from './src/install-runcom.js';
+import commandLineArgs from 'command-line-args';
 import { log } from './src/log.js';
 import { verifyManualInstallation } from './src/verify-manual-installation.js';
 
@@ -13,15 +15,32 @@ import { verifyManualInstallation } from './src/verify-manual-installation.js';
    */
 
   try {
-    log('starting install');
+    /**
+     * @type {{
+     *  'dry-run': boolean
+     * }}
+     */
+    // @ts-ignore
+    const { 'dry-run': dryRun } = commandLineArgs([
+      {
+        name: 'dry-run',
+        alias: 'd',
+        type: Boolean,
+        defaultValue: false,
+      },
+    ]);
 
-    const homeDir = process.env.HOME;
+    const HOME_DIR = process.env.HOME;
 
-    if (!homeDir) {
+    log('starting install, with args', { dryRun, HOME_DIR });
+
+    if (!HOME_DIR) {
       throw new Error('HOME environment variable not set');
     }
 
-    await verifyManualInstallation(false);
+    await verifyManualInstallation(dryRun);
+
+    await installRumcom(dryRun);
 
     log('done installing dotfiles!');
   } catch (err) {
