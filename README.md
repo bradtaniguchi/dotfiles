@@ -22,6 +22,8 @@ After the above manual steps are completed (which are done, manually due to ever
 
 Use the `install` script to install the dotfiles.
 
+**note** this script requires/relies on node 20+, as I'm utilizing nodejs for the installation script, rather than bash. (good practice!)
+
 ## License
 
 See [LICENSE](./LICENSE)

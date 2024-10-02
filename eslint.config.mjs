@@ -7,7 +7,13 @@ import pluginImport from 'eslint-plugin-import';
 
 export default [
   {
-    languageOptions: { globals: globals.node },
+    languageOptions: {
+      globals: {
+        // **note** both are combined according to eslint
+        ...globals.node,
+        ...globals.jest,
+      },
+    },
     plugins: {
       typescript: pluginTypescript,
       prettier: pluginPrettier,
