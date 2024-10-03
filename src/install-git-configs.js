@@ -1,7 +1,11 @@
 import { access, copyFile } from 'fs/promises';
 import { join } from 'path';
-import { HOME_DIR } from './constants/home-dir.js';
 import { log } from './log.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { ENV } from './constants/env.js';
+
+const dirname = path.dirname(fileURLToPath(import.meta.url)); // get the name of the directory
 
 /**
  * Install git configs, generally adds them to global.
@@ -11,11 +15,11 @@ import { log } from './log.js';
  */
 export async function installGitConfigs(dryRun = false) {
   const [hasGitConfig, hasGitIgnoreGlobal] = await Promise.all([
-    access(join(HOME_DIR, '.gitconfig'))
+    access(join(ENV.HOME_DIR, '.gitconfig'))
       .then(() => true)
       .catch(() => false),
 
-    access(join(HOME_DIR, '.gitignore_global'))
+    access(join(ENV.HOME_DIR, '.gitignore_global'))
       .then(() => true)
       .catch(() => false),
   ]);
@@ -26,22 +30,37 @@ export async function installGitConfigs(dryRun = false) {
       hasGitIgnoreGlobal,
     });
     return;
+  } else {
+    log('checked git related files', {
+      hasGitConfig,
+      hasGitIgnoreGlobal,
+    });
   }
 
-  if (!installGitConfigs) {
+  if (!hasGitConfig) {
     await copyFile(
-      join(__dirname, '../git/.gitconfig'),
-      join(HOME_DIR, '.gitconfig'),
-    ).then(() => log('Copied .gitconfig'));
+      join(dirname, '../git/.gitconfig'),
+      join(ENV.HOME_DIR, '.gitconfig'),
+    )
+      .then(() => log('Copied .gitconfig'))
+      .catch((err) => {
+        console.error('Failed to copy .gitconfig', err);
+        throw err;
+      });
   } else {
     log('.gitconfig already exists, skipping');
   }
 
   if (!hasGitIgnoreGlobal) {
     await copyFile(
-      join(__dirname, '../git/.gitignore_global'),
-      join(HOME_DIR, '.gitignore_global'),
-    ).then(() => log('Copied .gitignore_global'));
+      join(dirname, '../git/.gitignore_global'),
+      join(ENV.HOME_DIR, '.gitignore_global'),
+    )
+      .then(() => log('Copied .gitignore_global'))
+      .catch((err) => {
+        console.error('Failed to copy .gitignore_global', err);
+        throw err;
+      });
   } else {
     log('.gitignore_global already exists, skipping');
   }

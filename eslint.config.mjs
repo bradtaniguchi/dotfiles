@@ -5,6 +5,9 @@ import pluginJsDoc from 'eslint-plugin-jsdoc';
 import pluginPrettier from 'eslint-plugin-prettier';
 import pluginImport from 'eslint-plugin-import';
 
+/**
+ * @type {import('eslint').Linter.Config}
+ */
 export default [
   {
     languageOptions: {
@@ -30,6 +33,14 @@ export default [
         },
       ],
     },
+    overrides: [
+      {
+        files: ['**/*.spec.js'],
+        rules: {
+          'no-console': 'off', // Disable no-console rule for spec.js files
+        },
+      },
+    ],
   },
   pluginJs.configs.recommended,
 ];
