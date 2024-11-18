@@ -1,4 +1,0 @@
-#!/bin/bash
-
-pactl list sinks | grep 'Volume: front-left:' | tail -1 | cut -c 31-33
-
