@@ -2,6 +2,11 @@ import { access, copyFile } from 'fs/promises';
 import { join } from 'path';
 import { HOME_DIR } from './constants/home-dir.js';
 import { log } from './log.js';
+import { dirname } from 'path';
+import { fileURLToPath} from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+cosnt __dirname = dirname(__filename);
 
 /**
  * Installs the tmux config, if it does not exist
@@ -10,6 +15,7 @@ import { log } from './log.js';
 export async function installTmuxConfig(dryRun) {
   log('Installing tmux.config file');
 
+  // TODO: change to xdg base path
   const hasTmuxConfig = await access(join(HOME_DIR, '.tmux.conf'))
     .then(() => true)
     .catch(() => false);
