@@ -12,8 +12,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url)); // get the name 
  *
  * Will skip if file already exists.
  * @param {boolean} [dryRun] whether to run in dry run mode, will not throw
+ * @param {Object} [options] options for the function
+ * @param {string} [options.dirname] the directory to use for the relative path to the git files. Used for testing
  */
-export async function installGitConfigs(dryRun = false) {
+export async function installGitConfigs(dryRun = false, options = {}) {
+  const { dirname = __dirname } = options;
   const gitConfigDir = join(ENV.XDG_CONFIG_HOME, 'git');
   const gitConfigPath = join(gitConfigDir, 'config');
   const gitIgnoreGlobalPath = join(gitConfigDir, 'ignore');
@@ -40,13 +43,10 @@ export async function installGitConfigs(dryRun = false) {
       // Ensure the git config directory exists
       await mkdir(gitConfigDir, { recursive: true });
 
-      await copyFile(
-        join(__dirname, '../../git/', '.gitconfig'),
-        gitConfigPath,
-      );
+      await copyFile(join(dirname, '../../git/', '.gitconfig'), gitConfigPath);
       log('Copied .gitconfig to XDG config directory');
     } catch (err) {
-      console.error('Failed to copy .gitconfig', err);
+      log('Failed to copy .gitconfig', err);
       throw err;
     }
   } else {
@@ -59,12 +59,12 @@ export async function installGitConfigs(dryRun = false) {
       await mkdir(gitConfigDir, { recursive: true });
 
       await copyFile(
-        join(__dirname, '../git/.gitignore_global'),
+        join(dirname, '../git/.gitignore_global'),
         gitIgnoreGlobalPath,
       );
       log('Copied .gitignore_global to XDG config directory');
     } catch (err) {
-      console.error('Failed to copy .gitignore_global', err);
+      log('Failed to copy .gitignore_global', err);
       throw err;
     }
   } else {
