@@ -1,5 +1,5 @@
-import { exec } from './exec.js';
-import { log } from './log.js';
+import { exec } from '../utils/exec.js';
+import { log } from '../utils/log.js';
 
 /**
  * Helper function to execute a single command, with possible alias, and

@@ -1,7 +1,7 @@
-import mockFs from 'mock-fs';
-import { installGitConfigs } from './install-git-configs.js';
 import { jest } from '@jest/globals';
-import { ENV } from './constants/env.js';
+import mockFs from 'mock-fs';
+import { ENV } from '../constants/env.js';
+import { installGitConfigs } from './install-git-configs.js';
 
 describe('installGitConfigs', () => {
   /**
@@ -16,9 +16,9 @@ describe('installGitConfigs', () => {
   beforeAll(() => {
     log = console.log;
     console.log = jest.fn();
-    prevHomeDir = ENV.HOME_DIR;
+    prevHomeDir = ENV.HOME;
     // make this easily testable with mock-fs
-    ENV.HOME_DIR = '/home/user';
+    ENV.HOME = '/home/user';
   });
 
   afterAll(() => {
@@ -26,7 +26,7 @@ describe('installGitConfigs', () => {
     mockFs.restore();
     jest.restoreAllMocks();
     jest.resetAllMocks();
-    ENV.HOME_DIR = prevHomeDir;
+    ENV.HOME = prevHomeDir;
   });
 
   test('should not install if dryRun is true', async () => {

@@ -1,15 +1,16 @@
 import { appendFile, readFile } from 'fs/promises';
 import { join } from 'path';
-import { log } from './log.js';
-import { HOME_DIR } from './constants/home-dir.js';
-import { RC_LINES } from './constants/rc.js';
+import { ENV } from '../constants/env.js';
+import { RC_LINES } from '../constants/rc.js';
+import { log } from '../utils/log.js';
 
 /**
- * Function that handles installing the run-com files, vim, neovim and tmux
+ * Function that handles installing the run-com files, specifically bashrc and zshrc
+ *
  * @param {boolean} [dryRun] whether to run in dry run mode, will not throw
  * @returns {Promise<void>}
  */
-export async function installRumcom(dryRun = false) {
+export async function installRuncom(dryRun = false) {
   log('Installing .rc files');
 
   /**
@@ -21,7 +22,7 @@ export async function installRumcom(dryRun = false) {
 
   for (let rcLine of RC_LINES) {
     for (let rcFile of rcFiles) {
-      const rcFilePath = join(HOME_DIR, `.${rcFile}`);
+      const rcFilePath = join(ENV.HOME, `.${rcFile}`);
       const rcFileContents = await readFile(rcFilePath, 'utf-8');
 
       if (await rcLine.addLineCheckFn({ rcFile, rcFileContents })) {
