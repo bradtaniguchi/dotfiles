@@ -6,9 +6,9 @@ import { installGitConfigs } from './install-git-configs.js';
 
 describe('installGitConfigs', () => {
   /**
-   * @type {string}
+   * @type {typeof ENV}
    */
-  let prevHomeDir;
+  let prevEnv;
   /**
    * @type {console["log"]}
    */
@@ -17,9 +17,10 @@ describe('installGitConfigs', () => {
   beforeAll(() => {
     log = console.log;
     console.log = jest.fn();
-    prevHomeDir = ENV.HOME;
+    prevEnv = { ...ENV };
     // make this easily testable with mock-fs
     ENV.HOME = '/home/user';
+    ENV.XDG_CONFIG_HOME = '/home/user/.config';
   });
 
   afterEach(() => {
@@ -30,7 +31,10 @@ describe('installGitConfigs', () => {
     console.log = log;
     jest.restoreAllMocks();
     jest.resetAllMocks();
-    ENV.HOME = prevHomeDir;
+    for (const key in prevEnv) {
+      // @ts-ignore
+      ENV[key] = prevEnv[key];
+    }
   });
 
   test('should not install if dryRun is true', async () => {
@@ -73,23 +77,32 @@ describe('installGitConfigs', () => {
   });
 
   test('should create files if they do not exist', async () => {
-    // TODO: fix pathing
+    // return ENV.XDG_CONFIG_HOME to be /home/user/.config
+    ENV.XDG_CONFIG_HOME = '/home/user/.config';
     mockFs({
-      '/home/user/dotfiles/git': mockFs.load('./git'),
-      '/home/user/dotfiles/src/install': mockFs.load('./'),
+      '/home/user/dotfiles/git': mockFs.load('./git', {
+        recursive: true,
+      }),
+      '/home/user/dotfiles/src': mockFs.load('./src', {
+        recursive: true,
+      }),
     });
     // override __dirname in install-git-config to help with testing
 
     await installGitConfigs(false, {
       dirname: '/home/user/dotfiles/src/install',
     });
-
-    // expect(console.log).toHaveBeenCalledWith('>> checked git related files', {
-    //   hasGitConfig: false,
-    //   hasGitIgnoreGlobal: false,
-    // });
-
-    // expect(console.log).toHaveBeenCalledWith('>> Copied .gitconfig');
-    // expect(console.log).toHaveBeenCalledWith('>> Copied .gitignore_global');
+    expect(console.log).toHaveBeenCalledWith('>> Installing git config files', {
+      gitConfigPath: '/home/user/.config/git/config',
+      gitIgnoreGlobalPath: '/home/user/.config/git/ignore',
+      dirname: '/home/user/dotfiles/src/install',
+    });
+    // expect git files to be installed into the xdg path
+    expect(() =>
+      readFileSync('/home/user/.config/git/ignore', 'utf8'),
+    ).not.toThrow();
+    expect(() =>
+      readFileSync('/home/user/.config/git/config', 'utf8'),
+    ).not.toThrow();
   });
 });
