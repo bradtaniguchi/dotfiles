@@ -8,9 +8,12 @@ const __dirname = dirname(new URL(import.meta.url).pathname);
 /**
  * Installs the tmux config, if it does not exist
  * @param {boolean} [dryRun] whether to run in dry run mode, will not throw
+ * @param {Object} [options] options for the installation
+ * @param {string} [options.dirname] the directory name to use
  */
-export async function installTmuxConfig(dryRun) {
-  log('Installing tmux.config file', { dryRun, __dirname });
+export async function installTmuxConfig(dryRun, options = {}) {
+  const dirname = options.dirname || __dirname;
+  log('Installing tmux.config file', { dryRun, dirname });
 
   const hasXdgPathTmux = await access(
     join(ENV.XDG_CONFIG_HOME, 'tmux', 'tmux.conf'),
@@ -32,7 +35,7 @@ export async function installTmuxConfig(dryRun) {
     await mkdir(join((ENV.XDG_CONFIG_HOME, 'tmux')), { recursive: true });
 
     await copyFile(
-      join(__dirname, '../../runcom/.tmux.conf'),
+      join(dirname, '../../runcom/.tmux.conf'),
       // update to xdg path if neither is there
       join(ENV.XDG_CONFIG_HOME, 'tmux', 'tmux.conf'),
     ).then(() => log('Copied .tmux.conf'));

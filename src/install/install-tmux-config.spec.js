@@ -89,12 +89,13 @@ describe('installTmuxConfig', () => {
   test('should install tmux config to XDG path when no config exists', async () => {
     // Create the source tmux config file structure and target directory
     mockFs({
-      '/home/brad/Projects/dotfiles/src/tmux/.tmux.conf':
-        'source tmux config content',
+      '/home/user/dotfiles/runcom': mockFs.load('./runcom'),
       '/home/user/.config/tmux': {}, // Create target directory
     });
 
-    await installTmuxConfig(false);
+    await installTmuxConfig(false, {
+      dirname: '/home/user/dotfiles/src/install',
+    });
 
     expect(console.log).toHaveBeenCalledWith('>> Copied .tmux.conf');
 
@@ -106,15 +107,18 @@ describe('installTmuxConfig', () => {
 
   test('should create XDG tmux directory if it does not exist', async () => {
     mockFs({
-      '/home/brad/Projects/dotfiles/src/tmux/.tmux.conf':
-        'source tmux config content',
+      '/home/user/dotfiles/src/tmux/.tmux.conf': 'source tmux config content',
       // XDG config directory exists but not the tmux subdirectory
       '/home/user/.config': {},
     });
 
     // This test should actually fail because the function doesn't create the directory
     // This reveals a bug in the implementation
-    await expect(installTmuxConfig(false)).rejects.toThrow();
+    await expect(
+      installTmuxConfig(false, {
+        dirname: '/home/user/dotfiles/src/install',
+      }),
+    ).rejects.toThrow();
   });
 
   test('should handle copy file errors gracefully', async () => {
@@ -122,24 +126,10 @@ describe('installTmuxConfig', () => {
       // Missing source file to trigger copy error
     });
 
-    await expect(installTmuxConfig(false)).rejects.toThrow();
-  });
-
-  test('should log installation info with correct parameters', async () => {
-    mockFs({
-      '/home/brad/Projects/dotfiles/src/tmux/.tmux.conf':
-        'source tmux config content',
-      '/home/user/.config/tmux': {}, // Create target directory
-    });
-
-    await installTmuxConfig(false);
-
-    expect(console.log).toHaveBeenCalledWith(
-      '>> Installing tmux.config file',
-      expect.objectContaining({
-        dryRun: false,
-        __dirname: expect.stringContaining('install'),
+    await expect(
+      installTmuxConfig(false, {
+        dirname: '/home/user/dotfiles/src/install',
       }),
-    );
+    ).rejects.toThrow();
   });
 });

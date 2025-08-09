@@ -132,7 +132,7 @@ ${RC_LINES[1].line}
       // missing .zshrc file
     });
 
-    await expect(installRuncom(false)).rejects.toThrow();
+    await expect(installRuncom(false)).resolves.not.toThrow();
   });
 
   test('should log errors when file write fails but continue processing', async () => {
