@@ -29,7 +29,7 @@ export async function installTmuxConfig(dryRun) {
 
   if (!hasXdgPathTmux && !hasHomePathTmux) {
     await copyFile(
-      join(__dirname, '../tmux/.tmux.conf'),
+      join(__dirname, '../../runcom/.tmux.conf'),
       // update to xdg path if neither is there
       join(ENV.XDG_CONFIG_HOME, 'tmux', 'tmux.conf'),
     ).then(() => log('Copied .tmux.conf'));
