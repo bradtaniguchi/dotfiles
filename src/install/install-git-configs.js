@@ -59,7 +59,7 @@ export async function installGitConfigs(dryRun = false, options = {}) {
       await mkdir(gitConfigDir, { recursive: true });
 
       await copyFile(
-        join(dirname, '../git/.gitignore_global'),
+        join(dirname, '../../git/.gitignore_global'),
         gitIgnoreGlobalPath,
       );
       log('Copied .gitignore_global to XDG config directory');

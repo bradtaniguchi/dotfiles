@@ -1,4 +1,4 @@
-import { access, copyFile } from 'fs/promises';
+import { access, copyFile, mkdir } from 'fs/promises';
 import { dirname, join } from 'path';
 import { ENV } from '../constants/env.js';
 import { log } from '../utils/log.js';
@@ -28,6 +28,9 @@ export async function installTmuxConfig(dryRun) {
   }
 
   if (!hasXdgPathTmux && !hasHomePathTmux) {
+    // make tmux config folder path if missing
+    await mkdir(join((ENV.XDG_CONFIG_HOME, 'tmux')), { recursive: true });
+
     await copyFile(
       join(__dirname, '../../runcom/.tmux.conf'),
       // update to xdg path if neither is there
