@@ -1,31 +1,31 @@
 #!/usr/bin/env node
 
-import { installRumcom } from './src/install-runcom.js';
 import commandLineArgs from 'command-line-args';
-import { log } from './src/log.js';
-import { verifyManualInstallation } from './src/verify-manual-installation.js';
-import { HOME_DIR } from './src/constants/home-dir.js';
-import { installGitConfigs } from './src/install-git-configs.js';
-import { installTmuxConfig } from './src/install-tmux-config.js';
-import { installVimAndNvimConfigs } from './src/install-vim-and-nvim-configs.js';
+import { ENV } from './src/constants/env.js';
+import { installGitConfigs } from './src/install/install-git-configs.js';
+import { installNvimConfig } from './src/install/install-neovim-config.js';
+import { installRuncom } from './src/install/install-runcom.js';
+import { installTmuxConfig } from './src/install/install-tmux-config.js';
+import { log } from './src/utils/log.js';
+import { verifyManualInstallation } from './src/verify/verify-manual-installation.js';
 
 (async () => {
-  /**
-   * 1. move .gitconfig to ~/.gitconfig
-   * 2. move .gitignore_global to ~/.gitignore_global
-   * 3. move run-com files
-   *   - will require checks against pre-existing files
-   * 4. move .rc file into `~/.bashrc` or `~/.zshrc`
-   */
-
   try {
     /**
      * @type {{
-     *  'dry-run': boolean
+     *   'dry-run'?: boolean,
+     *   parallel?: boolean,
+     *   plugins?: boolean,
+     *   help?: boolean
      * }}
      */
-    // @ts-ignore
-    const { 'dry-run': dryRun, parallel } = commandLineArgs([
+    // @ts-expect-error
+    const {
+      'dry-run': dryRun,
+      parallel,
+      plugins: installPlugins,
+      help,
+    } = commandLineArgs([
       {
         name: 'dry-run',
         alias: 'd',
@@ -38,34 +38,60 @@ import { installVimAndNvimConfigs } from './src/install-vim-and-nvim-configs.js'
         type: Boolean,
         defaultValue: false,
       },
+      {
+        name: 'plugins',
+        type: Boolean,
+        defaultValue: false,
+      },
+      {
+        name: 'help',
+        alias: 'h',
+        type: Boolean,
+        defaultValue: false,
+      },
     ]);
 
-    log('starting install, with args', { dryRun, HOME_DIR });
+    if (help) {
+      log(`
+        Usage: install [options]
+
+        Options:
+          -d, --dry-run      Run the installation in dry-run mode
+          -p, --parallel     Run installations in parallel
+          --plugins          Install plugins for neo-vim
+          -h, --help         Show this help message
+      `);
+      process.exit(0);
+    }
+
+    log('starting install, with args', { dryRun, HOME_DIR: ENV.HOME });
 
     const manualInstallation$ = verifyManualInstallation(dryRun);
 
-    const installRumcom$ = installRumcom(dryRun);
+    const installRuncom$ = installRuncom(dryRun);
 
     const installGitConfigs$ = installGitConfigs(dryRun);
 
     const installTmuxConfig$ = installTmuxConfig(dryRun);
 
-    const installVimAndNvimConfigs$ = installVimAndNvimConfigs(dryRun);
+    const installNvimConfig$ = installNvimConfig(dryRun, {
+      installPlugins,
+    });
 
     if (parallel) {
       await Promise.all([
         manualInstallation$,
-        installRumcom$,
+        installRuncom$,
         installGitConfigs$,
         installTmuxConfig$,
-        installVimAndNvimConfigs$,
+        installNvimConfig$,
       ]);
     } else {
       await manualInstallation$;
-      await installRumcom$;
+      await installRuncom$;
       await installGitConfigs$;
       await installTmuxConfig$;
-      await installVimAndNvimConfigs$;
+      await installNvimConfig$;
     }
 
     log('done installing dotfiles!');

@@ -1,9 +1,9 @@
-import globals from 'globals';
 import pluginJs from '@eslint/js';
 import pluginTypescript from '@typescript-eslint/eslint-plugin';
+import pluginImport from 'eslint-plugin-import';
 import pluginJsDoc from 'eslint-plugin-jsdoc';
 import pluginPrettier from 'eslint-plugin-prettier';
-import pluginImport from 'eslint-plugin-import';
+import globals from 'globals';
 
 /**
  * @type {import('eslint').Linter.Config}
@@ -24,7 +24,7 @@ export default [
       import: pluginImport,
     },
     rules: {
-      'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-console': 'error', // Disallow all console methods in non-test files
       'import/extensions': [
         'error',
         'ignorePackages',
@@ -33,14 +33,13 @@ export default [
         },
       ],
     },
-    overrides: [
-      {
-        files: ['**/*.spec.js'],
-        rules: {
-          'no-console': 'off', // Disable no-console rule for spec.js files
-        },
-      },
-    ],
+  },
+  // Separate config for test files
+  {
+    files: ['**/*.spec.js'],
+    rules: {
+      'no-console': 'off', // Allow console methods in test files
+    },
   },
   pluginJs.configs.recommended,
 ];
