@@ -1,14 +1,12 @@
 import { jest } from '@jest/globals';
 import { readFileSync } from 'fs';
 import mockFs from 'mock-fs';
-import { ENV } from '../constants/env.js';
 import { installTmuxConfig } from './install-tmux-config.js';
 
 describe('installTmuxConfig', () => {
-  /**
-   * @type {typeof ENV}
-   */
-  let prevEnv;
+  // override this to help with testing, as the path and username could change
+  // when actually executing the script during testing
+  const dirname = '/home/user/dotfiles/src/install';
   /**
    * @type {console["log"]}
    */
@@ -17,10 +15,6 @@ describe('installTmuxConfig', () => {
   beforeAll(() => {
     log = console.log;
     console.log = jest.fn();
-    prevEnv = { ...ENV };
-    // make this easily testable with mock-fs
-    ENV.HOME = '/home/user';
-    ENV.XDG_CONFIG_HOME = '/home/user/.config';
   });
 
   afterEach(() => {
@@ -31,10 +25,6 @@ describe('installTmuxConfig', () => {
     console.log = log;
     jest.restoreAllMocks();
     jest.resetAllMocks();
-    for (const key in prevEnv) {
-      // @ts-ignore
-      ENV[key] = prevEnv[key];
-    }
   });
 
   test('should not install if dryRun is true', async () => {

@@ -6,8 +6,8 @@ export default {
   verbose: true,
   collectCoverage: true,
   coverageDirectory: 'coverage',
-  // testMatch: ['./src/?(*.)+(spec|test).[jt]s?(x)'],
   testMatch: ['**/src/**/*.spec.js'],
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx'],
   transform: {},
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 };
