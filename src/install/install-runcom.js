@@ -23,7 +23,11 @@ export async function installRuncom(dryRun = false) {
   for (let rcLine of RC_LINES) {
     for (let rcFile of rcFiles) {
       const rcFilePath = join(ENV.HOME, `.${rcFile}`);
-      const rcFileContents = await readFile(rcFilePath, 'utf-8');
+      const rcFileContents = await readFile(rcFilePath, 'utf-8').catch((err) => {
+        log(`error reading rcFile contents, might not exist ${err}`);
+      });
+
+      if (!rcFileContents) continue;
 
       if (await rcLine.addLineCheckFn({ rcFile, rcFileContents })) {
         try {
