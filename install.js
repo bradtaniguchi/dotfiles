@@ -58,7 +58,7 @@ import { verifyManualInstallation } from './src/verify/verify-manual-installatio
         Options:
           -d, --dry-run      Run the installation in dry-run mode
           -p, --parallel     Run installations in parallel
-          --plugins          Install plugins for neo-vim
+          --plugins          Install plugins for neo-vim and tmux
           -h, --help         Show this help message
       `);
       process.exit(0);

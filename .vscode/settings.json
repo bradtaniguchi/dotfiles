@@ -35,6 +35,7 @@
     "showmode",
     "smartcase",
     "smarttab",
-    "softtabstop"
+    "softtabstop",
+    "spelllang"
   ]
 }
