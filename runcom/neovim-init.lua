@@ -44,6 +44,11 @@ vim.opt.breakindent = true
 -- Encoding
 vim.opt.encoding = 'utf-8'
 
+-- Spellcheck settings
+-- see usage: https://neovim.io/doc/user/spell.html
+vim.opt.spell = true
+vim.opt.spelllang = 'en_us'
+
 -- Disable CoC startup warning (global variable)
 vim.g.coc_disable_startup_warning = 1
 
