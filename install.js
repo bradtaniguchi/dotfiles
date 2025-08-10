@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import commandLineArgs from 'command-line-args';
+import { Command } from 'commander';
 import { ENV } from './src/constants/env.js';
 import { installGitConfigs } from './src/install/install-git-configs.js';
 import { installNvimConfig } from './src/install/install-neovim-config.js';
@@ -11,58 +11,21 @@ import { verifyManualInstallation } from './src/verify/verify-manual-installatio
 
 (async () => {
   try {
-    /**
-     * @type {{
-     *   'dry-run'?: boolean,
-     *   parallel?: boolean,
-     *   plugins?: boolean,
-     *   help?: boolean
-     * }}
-     */
-    // @ts-expect-error
-    const {
-      'dry-run': dryRun,
-      parallel,
-      plugins: installPlugins,
-      help,
-    } = commandLineArgs([
-      {
-        name: 'dry-run',
-        alias: 'd',
-        type: Boolean,
-        defaultValue: false,
-      },
-      {
-        name: 'parallel',
-        alias: 'p',
-        type: Boolean,
-        defaultValue: false,
-      },
-      {
-        name: 'plugins',
-        type: Boolean,
-        defaultValue: false,
-      },
-      {
-        name: 'help',
-        alias: 'h',
-        type: Boolean,
-        defaultValue: false,
-      },
-    ]);
+    const program = new Command();
 
-    if (help) {
-      log(`
-        Usage: install [options]
+    program
+      .name('install')
+      .description('Install dotfiles')
+      .option('-d, --dry-run', 'Run the installation in dry-run mode', false)
+      .option('-p, --parallel', 'Run installations in parallel', false)
+      .option('--plugins', 'Install plugins for neo-vim', false)
+      .helpOption('-h, --help', 'Show this help message')
+      .parse();
 
-        Options:
-          -d, --dry-run      Run the installation in dry-run mode
-          -p, --parallel     Run installations in parallel
-          --plugins          Install plugins for neo-vim and tmux
-          -h, --help         Show this help message
-      `);
-      process.exit(0);
-    }
+    const options = program.opts();
+    const dryRun = options.dryRun;
+    const parallel = options.parallel;
+    const installPlugins = options.plugins;
 
     log('starting install, with args', { dryRun, HOME_DIR: ENV.HOME });
 
