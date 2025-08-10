@@ -122,4 +122,125 @@ describe('installTmuxConfig', () => {
       }),
     ).rejects.toThrow();
   });
+
+  test('should append plugins when tmux config exists but plugins are not installed', async () => {
+    const existingTmuxContent =
+      'set -g mouse on\nset -g status-position bottom';
+    const pluginsContent =
+      "set -g @plugin 'tmux-plugins/tpm'\nrun '~/.tmux/plugins/tpm/tpm'";
+
+    mockFs({
+      '/home/user/.config/tmux/tmux.conf': existingTmuxContent,
+      '/home/user/dotfiles/runcom/.tmux-plugins.conf': pluginsContent,
+    });
+
+    await installTmuxConfig(false, {
+      dirname: '/home/user/dotfiles/src/install',
+    });
+
+    expect(console.log).toHaveBeenCalledWith(
+      '>> Appended tmux plugins configuration',
+    );
+
+    // Verify the plugins were appended to the existing config
+    const updatedContent = readFileSync(
+      '/home/user/.config/tmux/tmux.conf',
+      'utf8',
+    );
+    expect(updatedContent).toContain(existingTmuxContent);
+    expect(updatedContent).toContain(pluginsContent);
+  });
+
+  test('should skip plugin installation when plugins are already present', async () => {
+    const tmuxContentWithPlugins =
+      "set -g mouse on\nset -g @plugin 'tmux-plugins/tpm'\nrun '~/.tmux/plugins/tpm/tpm'";
+
+    mockFs({
+      '/home/user/.config/tmux/tmux.conf': tmuxContentWithPlugins,
+      '/home/user/dotfiles/runcom/.tmux-plugins.conf':
+        "set -g @plugin 'tmux-plugins/tpm'",
+    });
+
+    await installTmuxConfig(false, {
+      dirname: '/home/user/dotfiles/src/install',
+    });
+
+    expect(console.log).toHaveBeenCalledWith(
+      '>> Tmux plugins already installed, skipping',
+    );
+  });
+
+  test('should append plugins to new tmux config installation', async () => {
+    const originalTmuxContent =
+      'set -g mouse on\nset -g status-position bottom';
+    const pluginsContent =
+      "set -g @plugin 'tmux-plugins/tpm'\nrun '~/.tmux/plugins/tpm/tpm'";
+
+    mockFs({
+      '/home/user/dotfiles/runcom/.tmux.conf': originalTmuxContent,
+      '/home/user/dotfiles/runcom/.tmux-plugins.conf': pluginsContent,
+      '/home/user/.config/tmux': {},
+    });
+
+    await installTmuxConfig(false, {
+      dirname: '/home/user/dotfiles/src/install',
+    });
+
+    expect(console.log).toHaveBeenCalledWith('>> Copied .tmux.conf');
+    expect(console.log).toHaveBeenCalledWith(
+      '>> Appended tmux plugins configuration',
+    );
+
+    // Verify the plugins were appended to the new config
+    const finalContent = readFileSync(
+      '/home/user/.config/tmux/tmux.conf',
+      'utf8',
+    );
+    expect(finalContent).toContain(originalTmuxContent);
+    expect(finalContent).toContain(pluginsContent);
+  });
+
+  test('should handle plugin installation in dry run mode', async () => {
+    const existingTmuxContent =
+      'set -g mouse on\nset -g status-position bottom';
+
+    mockFs({
+      '/home/user/.config/tmux/tmux.conf': existingTmuxContent,
+      '/home/user/dotfiles/runcom/.tmux-plugins.conf':
+        "set -g @plugin 'tmux-plugins/tpm'",
+    });
+
+    await installTmuxConfig(true, {
+      dirname: '/home/user/dotfiles/src/install',
+    });
+
+    expect(console.log).toHaveBeenCalledWith(
+      '>> Dry run, skipping file write',
+      {
+        hasTmuxConfig: true,
+      },
+    );
+  });
+
+  test('should handle errors during plugin installation gracefully', async () => {
+    // Create a scenario where tmux config exists but plugins file read fails
+    mockFs({
+      '/home/user/.config/tmux/tmux.conf': 'set -g mouse on',
+      '/home/user/dotfiles/runcom': {
+        // Directory exists but .tmux-plugins.conf file is missing
+      },
+    });
+
+    await installTmuxConfig(false, {
+      dirname: '/home/user/dotfiles/src/install',
+    });
+
+    expect(console.log).toHaveBeenCalledWith(
+      '>> .tmux.conf already exists at path /home/user/.config, skipping',
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      '>> Error installing tmux plugins:',
+      expect.any(String),
+    );
+  });
 });

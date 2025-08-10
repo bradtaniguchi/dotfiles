@@ -1,4 +1,4 @@
-import { access, copyFile, mkdir } from 'fs/promises';
+import { access, appendFile, copyFile, mkdir, readFile } from 'fs/promises';
 import { dirname, join } from 'path';
 import { ENV } from '../constants/env.js';
 import { log } from '../utils/log.js';
@@ -15,13 +15,14 @@ export async function installTmuxConfig(dryRun, options = {}) {
   const dirname = options.dirname || __dirname;
   log('Installing tmux.config file', { dryRun, dirname });
 
-  const hasXdgPathTmux = await access(
-    join(ENV.XDG_CONFIG_HOME, 'tmux', 'tmux.conf'),
-  )
+  const xdgTmuxPath = join(ENV.XDG_CONFIG_HOME, 'tmux', 'tmux.conf');
+  const homeTmuxPath = join(ENV.HOME, '.tmux.conf');
+
+  const hasXdgPathTmux = await access(xdgTmuxPath)
     .then(() => true)
     .catch(() => false);
 
-  const hasHomePathTmux = await access(join(ENV.HOME, '.tmux.conf'))
+  const hasHomePathTmux = await access(homeTmuxPath)
     .then(() => true)
     .catch(() => false);
 
@@ -30,18 +31,61 @@ export async function installTmuxConfig(dryRun, options = {}) {
     return;
   }
 
+  let tmuxConfigPath;
+
   if (!hasXdgPathTmux && !hasHomePathTmux) {
     // make tmux config folder path if missing
-    await mkdir(join((ENV.XDG_CONFIG_HOME, 'tmux')), { recursive: true });
+    await mkdir(join(ENV.XDG_CONFIG_HOME, 'tmux'), { recursive: true });
 
     await copyFile(
       join(dirname, '../../runcom/.tmux.conf'),
       // update to xdg path if neither is there
-      join(ENV.XDG_CONFIG_HOME, 'tmux', 'tmux.conf'),
+      xdgTmuxPath,
     ).then(() => log('Copied .tmux.conf'));
+
+    tmuxConfigPath = xdgTmuxPath;
   } else {
-    log(
-      `.tmux.conf already exists at path ${hasXdgPathTmux ? ENV.XDG_CONFIG_HOME : ENV.HOME}, skipping`,
+    const existingPath = hasXdgPathTmux ? ENV.XDG_CONFIG_HOME : ENV.HOME;
+    log(`.tmux.conf already exists at path ${existingPath}, skipping`);
+    tmuxConfigPath = hasXdgPathTmux ? xdgTmuxPath : homeTmuxPath;
+  }
+
+  // Check if plugins are already installed
+  await installTmuxPlugins(tmuxConfigPath, dirname, !!dryRun);
+}
+
+/**
+ * Installs tmux plugins if they're not already present in the config
+ * @param {string} tmuxConfigPath - path to the tmux.conf file
+ * @param {string} dirname - directory name for source files
+ * @param {boolean} dryRun - whether to run in dry run mode
+ */
+async function installTmuxPlugins(tmuxConfigPath, dirname, dryRun) {
+  try {
+    const tmuxConfig = await readFile(tmuxConfigPath, 'utf8');
+
+    // Check if plugins are already installed
+    if (tmuxConfig.includes("set -g @plugin 'tmux-plugins/tpm'")) {
+      log('Tmux plugins already installed, skipping');
+      return;
+    }
+
+    if (dryRun) {
+      log('Dry run, would append tmux plugins');
+      return;
+    }
+
+    // Read the plugins config file
+    const pluginsConfig = await readFile(
+      join(dirname, '../../runcom/.tmux-plugins.conf'),
+      'utf8',
     );
+
+    // Append plugins to the tmux config
+    await appendFile(tmuxConfigPath, '\n' + pluginsConfig);
+    log('Appended tmux plugins configuration');
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    log('Error installing tmux plugins:', errorMessage);
   }
 }
