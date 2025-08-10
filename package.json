@@ -8,7 +8,7 @@
   },
   "type": "module",
   "scripts": {
-    "start": "./install.js",
+    "install": "./install.js",
     "lint": "eslint",
     "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest"
   },
