@@ -10,10 +10,15 @@ const __dirname = dirname(new URL(import.meta.url).pathname);
  * @param {boolean} [dryRun] whether to run in dry run mode, will not throw
  * @param {Object} [options] options for the installation
  * @param {string} [options.dirname] the directory name to use
+ * @param {boolean} [options.scripts] whether to install tmux scripts
  */
 export async function installTmuxConfig(dryRun, options = {}) {
   const dirname = options.dirname || __dirname;
-  log('Installing tmux.config file', { dryRun, dirname });
+  log('Installing tmux.config file', {
+    dryRun,
+    dirname,
+    scripts: options.scripts,
+  });
 
   const xdgTmuxPath = join(ENV.XDG_CONFIG_HOME, 'tmux', 'tmux.conf');
   const homeTmuxPath = join(ENV.HOME, '.tmux.conf');
@@ -28,6 +33,11 @@ export async function installTmuxConfig(dryRun, options = {}) {
 
   if (dryRun) {
     log('Dry run, skipping file write', { hasTmuxConfig: hasXdgPathTmux });
+
+    // Handle scripts in dry run mode
+    if (options.scripts === true) {
+      await installTmuxScripts(dirname, true);
+    }
     return;
   }
 
@@ -52,6 +62,11 @@ export async function installTmuxConfig(dryRun, options = {}) {
 
   // Check if plugins are already installed
   await installTmuxPlugins(tmuxConfigPath, dirname, !!dryRun);
+
+  // Install tmux scripts if requested
+  if (options.scripts === true) {
+    await installTmuxScripts(dirname, !!dryRun);
+  }
 }
 
 /**
@@ -87,5 +102,59 @@ async function installTmuxPlugins(tmuxConfigPath, dirname, dryRun) {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     log('Error installing tmux plugins:', errorMessage);
+  }
+}
+
+/**
+ * Available tmux scripts to install
+ */
+const TMUX_SCRIPTS = [
+  {
+    name: 'tmux-git-status.js',
+    source: '../../runcom/tmux-git-status.js',
+  },
+  // Future scripts can be added here
+];
+
+/**
+ * Installs tmux scripts to the XDG config scripts folder
+ * @param {string} dirname - directory name for source files
+ * @param {boolean} dryRun - whether to run in dry run mode
+ */
+async function installTmuxScripts(dirname, dryRun) {
+  const scriptsPath = join(ENV.XDG_CONFIG_HOME, 'tmux', 'scripts');
+
+  try {
+    if (dryRun) {
+      log('Dry run, would install tmux scripts to:', scriptsPath);
+      return;
+    }
+
+    // Create scripts directory if it doesn't exist
+    await mkdir(scriptsPath, { recursive: true });
+    log('Created tmux scripts directory:', scriptsPath);
+
+    // Install each script
+    for (const script of TMUX_SCRIPTS) {
+      const targetPath = join(scriptsPath, script.name);
+      const sourcePath = join(dirname, script.source);
+
+      // Check if script already exists
+      const scriptExists = await access(targetPath)
+        .then(() => true)
+        .catch(() => false);
+
+      if (scriptExists) {
+        log(`Script ${script.name} already exists, skipping`);
+        continue;
+      }
+
+      // Copy the script
+      await copyFile(sourcePath, targetPath);
+      log(`Copied ${script.name} to scripts directory`);
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    log('Error installing tmux scripts:', errorMessage);
   }
 }

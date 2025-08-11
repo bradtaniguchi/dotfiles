@@ -19,6 +19,7 @@ import { verifyManualInstallation } from './src/verify/verify-manual-installatio
       .option('-d, --dry-run', 'Run the installation in dry-run mode', false)
       .option('-p, --parallel', 'Run installations in parallel', false)
       .option('--plugins', 'Install plugins for neo-vim', false)
+      .option('-s, --scripts', 'Install tmux scripts', false)
       .helpOption('-h, --help', 'Show this help message')
       .parse();
 
@@ -26,6 +27,7 @@ import { verifyManualInstallation } from './src/verify/verify-manual-installatio
     const dryRun = options.dryRun;
     const parallel = options.parallel;
     const installPlugins = options.plugins;
+    const scripts = options.scripts;
 
     log('starting install, with args', { dryRun, HOME_DIR: ENV.HOME });
 
@@ -35,7 +37,9 @@ import { verifyManualInstallation } from './src/verify/verify-manual-installatio
 
     const installGitConfigs$ = installGitConfigs(dryRun);
 
-    const installTmuxConfig$ = installTmuxConfig(dryRun);
+    const installTmuxConfig$ = installTmuxConfig(dryRun, {
+      scripts,
+    });
 
     const installNvimConfig$ = installNvimConfig(dryRun, {
       installPlugins,

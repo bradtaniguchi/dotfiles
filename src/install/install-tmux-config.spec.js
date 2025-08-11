@@ -243,4 +243,102 @@ describe('installTmuxConfig', () => {
       expect.any(String),
     );
   });
+
+  test('should install tmux scripts when scripts option is true', async () => {
+    jest.clearAllMocks(); // Clear any previous mock calls
+
+    mockFs({
+      '/home/user/.config/tmux/tmux.conf': 'existing tmux config',
+      '/home/user/dotfiles/runcom/tmux-git-status.js':
+        '#!/usr/bin/env node\nconsole.log("git status")',
+    });
+
+    await installTmuxConfig(false, {
+      dirname: '/home/user/dotfiles/src/install',
+      scripts: true,
+    });
+
+    expect(console.log).toHaveBeenCalledWith(
+      '>> Created tmux scripts directory:',
+      '/home/user/.config/tmux/scripts',
+    );
+    expect(console.log).toHaveBeenCalledWith(
+      '>> Copied tmux-git-status.js to scripts directory',
+    );
+  });
+
+  test('should not install scripts when scripts option is false', async () => {
+    jest.clearAllMocks(); // Clear any previous mock calls
+
+    mockFs({
+      '/home/user/.config/tmux/tmux.conf': 'existing tmux config',
+      '/home/user/dotfiles/runcom/tmux-git-status.js':
+        '#!/usr/bin/env node\nconsole.log("git status")',
+    });
+
+    await installTmuxConfig(false, {
+      dirname: '/home/user/dotfiles/src/install',
+      scripts: false,
+    });
+
+    expect(console.log).not.toHaveBeenCalledWith(
+      expect.stringContaining('scripts directory'),
+    );
+  });
+
+  test('should skip script installation if script already exists', async () => {
+    mockFs({
+      '/home/user/.config/tmux/tmux.conf': 'existing tmux config',
+      '/home/user/.config/tmux/scripts/tmux-git-status.js': 'existing script',
+      '/home/user/dotfiles/runcom/tmux-git-status.js':
+        '#!/usr/bin/env node\nconsole.log("git status")',
+    });
+
+    await installTmuxConfig(false, {
+      dirname: '/home/user/dotfiles/src/install',
+      scripts: true,
+    });
+
+    expect(console.log).toHaveBeenCalledWith(
+      '>> Script tmux-git-status.js already exists, skipping',
+    );
+  });
+
+  test('should handle scripts installation in dry run mode', async () => {
+    mockFs({
+      '/home/user/.config/tmux/tmux.conf': 'existing tmux config',
+      '/home/user/dotfiles/runcom/tmux-git-status.js':
+        '#!/usr/bin/env node\nconsole.log("git status")',
+    });
+
+    await installTmuxConfig(true, {
+      dirname: '/home/user/dotfiles/src/install',
+      scripts: true,
+    });
+
+    expect(console.log).toHaveBeenCalledWith(
+      '>> Dry run, would install tmux scripts to:',
+      '/home/user/.config/tmux/scripts',
+    );
+  });
+
+  test('should handle errors during script installation gracefully', async () => {
+    // Create a scenario where scripts directory cannot be created
+    mockFs({
+      '/home/user/.config/tmux/tmux.conf': 'existing tmux config',
+      '/home/user/dotfiles/runcom': {
+        // Directory exists but tmux-git-status.js file is missing
+      },
+    });
+
+    await installTmuxConfig(false, {
+      dirname: '/home/user/dotfiles/src/install',
+      scripts: true,
+    });
+
+    expect(console.log).toHaveBeenCalledWith(
+      '>> Error installing tmux scripts:',
+      expect.any(String),
+    );
+  });
 });
