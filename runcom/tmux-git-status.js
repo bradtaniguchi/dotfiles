@@ -66,6 +66,7 @@ function getBranchInfo() {
 
     return { branch, isDetached };
   } catch {
+    // TODO: this is failing?
     return { branch: 'unknown', isDetached: true };
   }
 }
@@ -162,78 +163,82 @@ function getStashCount() {
 }
 
 function formatOutput() {
-  if (!isGitRepo()) {
-    return '';
-  }
+  try {
+    if (!isGitRepo()) {
+      return '';
+    }
 
-  const { branch, isDetached } = getBranchInfo();
-  const { ahead, behind } = getAheadBehind();
-  const counts = getStatusCounts();
-  const stashCount = getStashCount();
+    const { branch, isDetached } = getBranchInfo();
+    const { ahead, behind } = getAheadBehind();
+    const counts = getStatusCounts();
+    const stashCount = getStashCount();
 
-  let output = [];
+    let output = [];
 
-  // Branch name with symbol
-  const branchSymbol = isDetached ? SYMBOLS.detached : SYMBOLS.branch;
-  output.push(`${COLORS.branch}${branchSymbol} ${branch}${COLORS.reset}`);
+    // Branch name with symbol
+    const branchSymbol = isDetached ? SYMBOLS.detached : SYMBOLS.branch;
+    output.push(`${COLORS.branch}${branchSymbol} ${branch}${COLORS.reset}`);
 
-  // Ahead/behind indicators
-  if (ahead > 0) {
-    output.push(`${COLORS.ahead}${SYMBOLS.ahead}${ahead}${COLORS.reset}`);
-  }
-  if (behind > 0) {
-    output.push(`${COLORS.behind}${SYMBOLS.behind}${behind}${COLORS.reset}`);
-  }
+    // Ahead/behind indicators
+    if (ahead > 0) {
+      output.push(`${COLORS.ahead}${SYMBOLS.ahead}${ahead}${COLORS.reset}`);
+    }
+    if (behind > 0) {
+      output.push(`${COLORS.behind}${SYMBOLS.behind}${behind}${COLORS.reset}`);
+    }
 
-  // Status indicators
-  if (counts.conflict > 0) {
-    output.push(
-      `${COLORS.conflict}${SYMBOLS.conflict}${counts.conflict}${COLORS.reset}`,
+    // Status indicators
+    if (counts.conflict > 0) {
+      output.push(
+        `${COLORS.conflict}${SYMBOLS.conflict}${counts.conflict}${COLORS.reset}`,
+      );
+    }
+    if (counts.staged > 0) {
+      output.push(
+        `${COLORS.staged}${SYMBOLS.staged}${counts.staged}${COLORS.reset}`,
+      );
+    }
+    if (counts.modified > 0) {
+      output.push(
+        `${COLORS.modified}${SYMBOLS.modified}${counts.modified}${COLORS.reset}`,
+      );
+    }
+    if (counts.deleted > 0) {
+      output.push(
+        `${COLORS.deleted}${SYMBOLS.deleted}${counts.deleted}${COLORS.reset}`,
+      );
+    }
+    if (counts.renamed > 0) {
+      output.push(
+        `${COLORS.renamed}${SYMBOLS.renamed}${counts.renamed}${COLORS.reset}`,
+      );
+    }
+    if (counts.untracked > 0) {
+      output.push(
+        `${COLORS.untracked}${SYMBOLS.untracked}${counts.untracked}${COLORS.reset}`,
+      );
+    }
+
+    // Stash indicator
+    if (stashCount > 0) {
+      output.push(
+        `${COLORS.stashed}${SYMBOLS.stashed}${stashCount}${COLORS.reset}`,
+      );
+    }
+
+    // Clean indicator if no changes
+    const totalChanges = Object.values(counts).reduce(
+      (sum, count) => sum + count,
+      0,
     );
-  }
-  if (counts.staged > 0) {
-    output.push(
-      `${COLORS.staged}${SYMBOLS.staged}${counts.staged}${COLORS.reset}`,
-    );
-  }
-  if (counts.modified > 0) {
-    output.push(
-      `${COLORS.modified}${SYMBOLS.modified}${counts.modified}${COLORS.reset}`,
-    );
-  }
-  if (counts.deleted > 0) {
-    output.push(
-      `${COLORS.deleted}${SYMBOLS.deleted}${counts.deleted}${COLORS.reset}`,
-    );
-  }
-  if (counts.renamed > 0) {
-    output.push(
-      `${COLORS.renamed}${SYMBOLS.renamed}${counts.renamed}${COLORS.reset}`,
-    );
-  }
-  if (counts.untracked > 0) {
-    output.push(
-      `${COLORS.untracked}${SYMBOLS.untracked}${counts.untracked}${COLORS.reset}`,
-    );
-  }
+    if (totalChanges === 0 && stashCount === 0 && ahead === 0 && behind === 0) {
+      output.push(`${COLORS.clean}${SYMBOLS.clean}${COLORS.reset}`);
+    }
 
-  // Stash indicator
-  if (stashCount > 0) {
-    output.push(
-      `${COLORS.stashed}${SYMBOLS.stashed}${stashCount}${COLORS.reset}`,
-    );
+    return output.join(' ');
+  } catch (err) {
+    return 'whoops!';
   }
-
-  // Clean indicator if no changes
-  const totalChanges = Object.values(counts).reduce(
-    (sum, count) => sum + count,
-    0,
-  );
-  if (totalChanges === 0 && stashCount === 0 && ahead === 0 && behind === 0) {
-    output.push(`${COLORS.clean}${SYMBOLS.clean}${COLORS.reset}`);
-  }
-
-  return output.join(' ');
 }
 
 // Main execution
