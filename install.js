@@ -63,7 +63,7 @@ import { verifyManualInstallation } from './src/verify/verify-manual-installatio
 
     log('done installing dotfiles!');
   } catch (err) {
-    console.error('Error installing dotfiles: ', err);
+    log('Error installing dotfiles: ', err);
     process.exit(1);
   }
 })();

@@ -29,7 +29,7 @@ describe('installTmuxConfig', () => {
 
   test('should not install if dryRun is true', async () => {
     mockFs({});
-    await installTmuxConfig(true);
+    await installTmuxConfig(true, { dirname });
 
     expect(console.log).toHaveBeenCalledWith(
       '>> Dry run, skipping file write',
@@ -44,7 +44,7 @@ describe('installTmuxConfig', () => {
       '/home/user/.config/tmux/tmux.conf': 'existing tmux config',
     });
 
-    await installTmuxConfig(false);
+    await installTmuxConfig(false, { dirname });
 
     expect(console.log).toHaveBeenCalledWith(
       '>> .tmux.conf already exists at path /home/user/.config, skipping',
@@ -56,7 +56,7 @@ describe('installTmuxConfig', () => {
       '/home/user/.tmux.conf': 'existing tmux config',
     });
 
-    await installTmuxConfig(false);
+    await installTmuxConfig(false, { dirname });
 
     expect(console.log).toHaveBeenCalledWith(
       '>> .tmux.conf already exists at path /home/user, skipping',
@@ -69,7 +69,7 @@ describe('installTmuxConfig', () => {
       '/home/user/.tmux.conf': 'home tmux config',
     });
 
-    await installTmuxConfig(false);
+    await installTmuxConfig(false, { dirname });
 
     expect(console.log).toHaveBeenCalledWith(
       '>> .tmux.conf already exists at path /home/user/.config, skipping',
