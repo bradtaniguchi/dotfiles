@@ -10,10 +10,11 @@ const __dirname = dirname(new URL(import.meta.url).pathname);
  * @param {boolean} [dryRun] whether to run in dry run mode, will not throw
  * @param {Object} [options] options for the installation
  * @param {string} [options.dirname] the directory name to use
+ * @param {boolean} [options.force] force overwrite of existing files
  */
 export async function installTmuxConfig(dryRun, options = {}) {
-  const dirname = options.dirname || __dirname;
-  log('Installing tmux.config file', { dryRun, dirname });
+  const { dirname = __dirname, force = false } = options;
+  log('Installing tmux.config file', { dryRun, dirname, force });
 
   const xdgTmuxPath = join(ENV.XDG_CONFIG_HOME, 'tmux', 'tmux.conf');
   const homeTmuxPath = join(ENV.HOME, '.tmux.conf');
@@ -33,7 +34,7 @@ export async function installTmuxConfig(dryRun, options = {}) {
 
   let tmuxConfigPath;
 
-  if (!hasXdgPathTmux && !hasHomePathTmux) {
+  if (force || (!hasXdgPathTmux && !hasHomePathTmux)) {
     // make tmux config folder path if missing
     await mkdir(join(ENV.XDG_CONFIG_HOME, 'tmux'), { recursive: true });
 

@@ -12,10 +12,11 @@ const __dirname = dirname(new URL(import.meta.url).pathname);
  * prevent writes
  * @param {Object} [options]
  * @param {boolean} [options.installPlugins=false] whether to install plugins for neovim
+ * @param {boolean} [options.force] force overwrite of existing files
  */
 export async function installNvimConfig(
   dryRun,
-  { installPlugins } = { installPlugins: false },
+  { installPlugins = false, force = false } = {},
 ) {
   log('Installing vim and neovim configs', { dryRun, __dirname });
 
@@ -31,7 +32,7 @@ export async function installNvimConfig(
     return;
   }
 
-  if (!hasNeoVimConfig) {
+  if (force || !hasNeoVimConfig) {
     // Ensure the nvim config directory exists
     await mkdir(nvimConfigDir, { recursive: true });
 
