@@ -19,26 +19,31 @@ import { verifyManualInstallation } from './src/verify/verify-manual-installatio
       .option('-d, --dry-run', 'Run the installation in dry-run mode', false)
       .option('-p, --parallel', 'Run installations in parallel', false)
       .option('--plugins', 'Install plugins for neo-vim', false)
+
+      .option('-f, --force', 'Force overwrite of existing files', false)
       .helpOption('-h, --help', 'Show this help message')
       .parse();
 
     const options = program.opts();
+
     const dryRun = options.dryRun;
     const parallel = options.parallel;
     const installPlugins = options.plugins;
+    const force = options.force;
 
-    log('starting install, with args', { dryRun, HOME_DIR: ENV.HOME });
+    log('starting install, with args', { dryRun, force, HOME_DIR: ENV.HOME });
 
     const manualInstallation$ = verifyManualInstallation(dryRun);
 
-    const installRuncom$ = installRuncom(dryRun);
+    const installRuncom$ = installRuncom(dryRun, { force });
 
-    const installGitConfigs$ = installGitConfigs(dryRun);
+    const installGitConfigs$ = installGitConfigs(dryRun, { force });
 
-    const installTmuxConfig$ = installTmuxConfig(dryRun);
+    const installTmuxConfig$ = installTmuxConfig(dryRun, { force });
 
     const installNvimConfig$ = installNvimConfig(dryRun, {
       installPlugins,
+      force,
     });
 
     if (parallel) {
@@ -59,7 +64,7 @@ import { verifyManualInstallation } from './src/verify/verify-manual-installatio
 
     log('done installing dotfiles!');
   } catch (err) {
-    console.error('Error installing dotfiles: ', err);
+    log('Error installing dotfiles: ', err);
     process.exit(1);
   }
 })();

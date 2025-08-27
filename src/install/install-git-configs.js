@@ -14,9 +14,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url)); // get the name 
  * @param {boolean} [dryRun] whether to run in dry run mode, will not throw
  * @param {Object} [options] options for the function
  * @param {string} [options.dirname] the directory to use for the relative path to the git files. Used for testing
+ * @param {boolean} [options.force] force overwrite of existing files
  */
 export async function installGitConfigs(dryRun = false, options = {}) {
-  const dirname = options.dirname || __dirname;
+  const { dirname = __dirname, force = false } = options;
   const gitConfigDir = join(ENV.XDG_CONFIG_HOME, 'git');
   const gitConfigPath = join(gitConfigDir, 'config');
   const gitIgnoreGlobalPath = join(gitConfigDir, 'ignore');
@@ -44,7 +45,7 @@ export async function installGitConfigs(dryRun = false, options = {}) {
     hasGitIgnoreGlobal,
   });
 
-  if (!hasGitConfig) {
+  if (force || !hasGitConfig) {
     try {
       // Ensure the git config directory exists
       await mkdir(gitConfigDir, { recursive: true });
@@ -60,7 +61,7 @@ export async function installGitConfigs(dryRun = false, options = {}) {
     log('git config already exists, skipping');
   }
 
-  if (!hasGitIgnoreGlobal) {
+  if (force || !hasGitIgnoreGlobal) {
     try {
       // Ensure the git config directory exists (in case first file was skipped)
       await mkdir(gitConfigDir, { recursive: true });

@@ -8,9 +8,12 @@ import { log } from '../utils/log.js';
  * Function that handles installing the run-com files, specifically bashrc and zshrc
  *
  * @param {boolean} [dryRun] whether to run in dry run mode, will not throw
+ * @param {Object} [options] options for the function
+ * @param {boolean} [options.force] force overwrite of existing files
  * @returns {Promise<void>}
  */
-export async function installRuncom(dryRun = false) {
+export async function installRuncom(dryRun = false, options = {}) {
+  const { force = false } = options;
   log('Installing .rc files');
 
   /**
@@ -23,13 +26,15 @@ export async function installRuncom(dryRun = false) {
   for (let rcLine of RC_LINES) {
     for (let rcFile of rcFiles) {
       const rcFilePath = join(ENV.HOME, `.${rcFile}`);
-      const rcFileContents = await readFile(rcFilePath, 'utf-8').catch((err) => {
-        log(`error reading rcFile contents, might not exist ${err}`);
-      });
+      const rcFileContents = await readFile(rcFilePath, 'utf-8').catch(
+        (err) => {
+          log(`error reading rcFile contents, might not exist ${err}`);
+        },
+      );
 
       if (!rcFileContents) continue;
 
-      if (await rcLine.addLineCheckFn({ rcFile, rcFileContents })) {
+      if (force || (await rcLine.addLineCheckFn({ rcFile, rcFileContents }))) {
         try {
           if (dryRun) {
             log('Dry run, skipping file write');
@@ -39,10 +44,7 @@ export async function installRuncom(dryRun = false) {
           log(`Added line to ${rcFile}: ${rcLine.line}`);
           filesChanged++;
         } catch (err) {
-          console.error(
-            `Error adding line to ${rcFile}: ${rcLine.line}, skipping`,
-            err,
-          );
+          log(`Error adding line to ${rcFile}: ${rcLine.line}, skipping`, err);
           continue;
         }
       } else {
