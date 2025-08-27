@@ -15,7 +15,7 @@ export async function verifyManualInstallation(dryRun = false) {
     commandName: 'neovim',
   });
 
-  await verifySingleCommand('tmux --help', {
+  await verifySingleCommand('command -v tmux > /dev/null', {
     dryRun,
     commandName: 'tmux',
   });

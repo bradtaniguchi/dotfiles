@@ -28,7 +28,7 @@ export async function verifySingleCommand(
     const stdout = await exec(command);
     return stdout;
   } catch (err) {
-    console.error(`${commandName} threw`, err);
+    log(`${commandName} threw`, err);
 
     if (err instanceof Error && options.dryRun) {
       return err.message;
