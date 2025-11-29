@@ -10,7 +10,7 @@ import { verifySingleCommand } from './verify-single-command-exists.js';
 export async function verifyManualInstallation(dryRun = false) {
   log('verifying installed applications');
 
-  await verifySingleCommand('nvim --version', {
+  await verifySingleCommand('command -v nvim > /dev/null', {
     dryRun,
     commandName: 'neovim',
   });
